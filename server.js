@@ -21,6 +21,7 @@ const USER_FILE = path.join(__dirname, "data", "users.json");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const MASA_TOKEN = 3600;
+const V1_BERAKHIR = '2027-06-30T00:00:00Z';
 
 if (!TOKEN_SECRET) {
   console.error('TOKEN_SECRET belum diatur. Jalankan: node --env-file=.env server.js');
@@ -647,7 +648,9 @@ if (segmen[0] === 'me' && segmen.length === 1) {
   }
   const alamat = segmen.slice(1);
   
-
+  if (versi === 'v1') {
+  res.setHeader('Sunset', new Date(V1_BERAKHIR).toUTCString());
+}
 
   if (versi === 'v2' && alamat[0] === 'regions' && alamat.length <= 2) {
     return tanganiRegions(req, res, alamat);
