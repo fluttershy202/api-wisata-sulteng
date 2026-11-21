@@ -307,6 +307,16 @@ async function daftarDestinasi(req, res, url, versi) {
     data = data.filter((item) => item.category === kategori);
   }
 
+  // Filter regionId khusus untuk versi v2
+  if (versi === 'v2') {
+    const regionIdParam = url.searchParams.get('regionId');
+
+    if (regionIdParam !== null) {
+      const regionIdAngka = Number(regionIdParam);
+      data = data.filter((item) => item.regionId === regionIdAngka);
+    }
+  }
+
   const hasil = [];
   for (const item of data) {
     hasil.push(await bentukKeluar(versi, item));
