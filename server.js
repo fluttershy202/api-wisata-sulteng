@@ -651,13 +651,36 @@ if (segmen[0] === 'me' && segmen.length === 1) {
     return tanganiGraphQL(req, res);
   }
 
-  // Alamat REST wajib diawali versi: /v1/... atau /v2/...
-  const versi = segmen[0];
-  if (versi !== 'v1' && versi !== 'v2') {
-    return kirimError(res, 404, 'Alamat harus diawali /v1 atau /v2');
+  // Menentukan versi API melalui URL atau header
+let versi;
+let alamat;
+
+if (segmen[0] === 'v1' || segmen[0] === 'v2') {
+  versi = segmen[0];
+  alamat = segmen.slice(1);
+} else {
+  versi = req.headers['x-api-version'];
+
+  if (!versi) {
+    return kirimError(
+      res,
+      400,
+      'Versi API harus ditentukan melalui awalan URL /v1 atau /v2, atau header x-api-version dengan nilai 1 atau 2'
+    );
   }
-  const alamat = segmen.slice(1);
-  
+
+  if (versi !== '1' && versi !== '2') {
+    return kirimError(
+      res,
+      400,
+      'Header x-api-version hanya menerima nilai 1 atau 2'
+    );
+  }
+
+  versi = `v${versi}`;
+  alamat = segmen;
+}
+
   if (versi === 'v1') {
   res.setHeader('Sunset', new Date(V1_BERAKHIR).toUTCString());
 }
